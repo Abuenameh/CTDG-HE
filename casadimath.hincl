@@ -1,14 +1,14 @@
-CUnknownElement[energyFunctionDecl[energy1]]
+complex<SX> energy1(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 
-CUnknownElement[energyFunctionDecl[energy2]]
+complex<SX> energy2(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 
-CUnknownElement[energyFunctionDecl[energy3]]
+complex<SX> energy3(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 
-CUnknownElement[energyFunctionDecl[energy4]]
+complex<SX> energy4(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 
-CUnknownElement[energyFunctionDecl[energy5]]
+complex<SX> energy5(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 
-CUnknownElement[energyFunctionDecl[energy6]]
+complex<SX> energy6(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 
-CUnknownElement[energyFunctionDecl[energy7]]
+complex<SX> energy7(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu);
 

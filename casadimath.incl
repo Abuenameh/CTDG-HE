@@ -1,14 +1,783 @@
-CUnknownElement[energyFunction[energy1, {{CAssign[AddTo, Ei, COperator[Plus, {COperator[Times, {-0.5, complex<SX>(dU[i],0), n, CCall[conj, {CArray[CArray[f, {i}], {n}]}], CArray[CArray[f, {i}], {n}]}], COperator[Times, {-1., complex<SX>(mu,0), n, CCall[conj, {CArray[CArray[f, {i}], {n}]}], CArray[CArray[f, {i}], {n}]}], COperator[Times, {-0.5, complex<SX>(U0,0), n, CCall[conj, {CArray[CArray[f, {i}], {n}]}], CArray[CArray[f, {i}], {n}]}], COperator[Times, {0.5, complex<SX>(dU[i],0), COperator[Times, {n, n}], CCall[conj, {CArray[CArray[f, {i}], {n}]}], CArray[CArray[f, {i}], {n}]}], COperator[Times, {0.5, complex<SX>(U0,0), COperator[Times, {n, n}], CCall[conj, {CArray[CArray[f, {i}], {n}]}], CArray[CArray[f, {i}], {n}]}]}]]}}]]
+complex<SX> energy1(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+Ei += -0.5 * complex<SX>(dU[i],0) * n * conj(f[i][n]) * f[i][n] + -1. * complex<SX>(mu,0) * n * conj(f[i][n]) * f[i][n] + -0.5 * complex<SX>(U0,0) * n * conj(f[i][n]) * f[i][n] + 0.5 * complex<SX>(dU[i],0) * (n * n) * conj(f[i][n]) * f[i][n] + 0.5 * complex<SX>(U0,0) * (n * n) * conj(f[i][n]) * f[i][n];
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
-CUnknownElement[energyFunction[energy2, {CIf[COperator[LessEqual, {COperator[Plus, {1, n}], nmax}], {CAssign[AddTo, Ej1, COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {n}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + n}], CCall[g, {n, COperator[Plus, {1, n}]}], CArray[J, {j1}]}]]}], CIf[COperator[LessEqual, {COperator[Plus, {1, n}], nmax}], {CAssign[AddTo, Ej2, COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {n}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + n}], CCall[g, {n, COperator[Plus, {1, n}]}], CArray[J, {i}]}]]}]}]]
+complex<SX> energy2(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+if( 1 + n <= nmax)
+{
+Ej1 += -1. * conj(f[i][1 + n]) * conj(f[j1][n]) * f[i][n] * f[j1][1 + n] * g(n, 1 + n) * J[j1];
+}
+if( 1 + n <= nmax)
+{
+Ej2 += -1. * conj(f[i][1 + n]) * conj(f[j2][n]) * f[i][n] * f[j2][1 + n] * g(n, 1 + n) * J[i];
+}
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
-CUnknownElement[energyFunction[energy3, CIf[COperator[Less, {n, nmax}], CFor[CDeclare[int, CAssign[m, 1]], COperator[Less, {m, nmax+1}], COperator[Increment, m], CIf[COperator[Unequal, {n, COperator[Plus, {-1, m}]}], {CAssign[AddTo, Ej1, COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]], CAssign[AddTo, Ej2, COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CArray[J, {i}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]}]]]]]
+complex<SX> energy3(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+if( n < nmax)
+{
+for( int m = 1; m < nmax+1; m++)
+{
+if( n != -1 + m)
+{
+Ej1 += -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][n] * f[j1][m] * g(n, m) * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m)));
+Ej2 += -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][n] * f[j2][m] * g(n, m) * J[i] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m)));
+}
+}
+}
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
-CUnknownElement[energyFunction[energy4, CIf[COperator[Less, {n, nmax}], CFor[CDeclare[int, CAssign[m, 1]], COperator[Less, {m, nmax+1}], COperator[Increment, m], CIf[COperator[Unequal, {n, COperator[Plus, {-1, m}]}], CFor[CDeclare[int, CAssign[p, 0]], COperator[Less, {p, nmax}], COperator[Increment, p], {CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., n}], p}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j1}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j1}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {1, n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., n}], p}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {1, n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., m}], p}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, j1, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, j1, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., m}], p}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, j2, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, j2, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., n}], p}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {1, n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., n}], p}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {1, n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {p}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, j1, k1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {p}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, j1, k1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {1, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {p}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, j2, k2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {p}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, j2, k2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j2, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {1 + p}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j2, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j1, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {1 + p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j1, i, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {k1}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {k1}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, k1, j1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {k1}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {k1}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, k1, j1, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[GreaterEqual, {nmax, COperator[Plus, {1, p}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + p}], CArray[CArray[f, {k2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {-1., CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + p}], CArray[CArray[f, {k2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, k2, j2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CCall[conj, {CArray[CArray[f, {k2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CCall[conj, {CArray[CArray[f, {k2}], {1 + p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {p}], CCall[g, {n, m}], CCall[g, {p, COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, k2, j2, p, COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}], CCall[eps, {U0, n, m}]}]}]}]}]]]}]}]]]]]]
+complex<SX> energy4(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+if( n < nmax)
+{
+for( int m = 1; m < nmax+1; m++)
+{
+if( n != -1 + m)
+{
+for( int p = 0; p < nmax; p++)
+{
+if( nmax >= 1 + p)
+{
+if( m + -1. * p == 0 && 1 + -1. * n + p == 0)
+{
+Ej1 += -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][p] * f[j1][1 + p] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][p] * f[j1][1 + p] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+if( 1 + n + -1. * p == 0 && 2 + -1. * m + p == 0)
+{
+Ej1 += conj(f[i][1 + p]) * conj(f[j1][p]) * f[i][n] * f[j1][m] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + p]) * conj(f[j1][p]) * f[i][n] * f[j1][m] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( m + -1. * p == 0 && 1 + -1. * n + p == 0)
+{
+Ej2 += -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][p] * f[j2][1 + p] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][p] * f[j2][1 + p] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+if( 1 + n + -1. * p == 0 && 2 + -1. * m + p == 0)
+{
+Ej2 += conj(f[i][1 + p]) * conj(f[j2][p]) * f[i][n] * f[j2][m] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + p]) * conj(f[j2][p]) * f[i][n] * f[j2][m] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( n + -1. * p == 0 && 1 + -1. * m + p == 0)
+{
+Ej1 += conj(f[i][p]) * conj(f[j1][1 + p]) * f[i][n] * f[j1][m] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][1 + p] * f[j1][p] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][p]) * conj(f[j1][1 + p]) * f[i][n] * f[j1][m] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, j1, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][1 + p] * f[j1][p] * g(n, m) * g(p, 1 + p) * (J[j1] * J[j1]) * eps(dU, j1, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( n + -1. * p == 0 && 1 + -1. * m + p == 0)
+{
+Ej2 += conj(f[i][p]) * conj(f[j2][1 + p]) * f[i][n] * f[j2][m] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j2][p] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][p]) * conj(f[j2][1 + p]) * f[i][n] * f[j2][m] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, j2, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j2][p] * g(n, m) * g(p, 1 + p) * (J[i] * J[i]) * eps(dU, j2, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( 1 + -1. * n + p == 0)
+{
+Ej1j2 += -1. * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][p] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][p] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+if( 1 + n + -1. * p == 0)
+{
+Ej1j2 += conj(f[i][1 + p]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + p]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( 1 + -1. * n + p == 0)
+{
+Ej1j2 += -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][p] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][p] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+if( 1 + n + -1. * p == 0)
+{
+Ej1j2 += conj(f[i][1 + p]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][n] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + p]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][n] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( 1 + -1. * m + p == 0)
+{
+Ej1k1 += conj(f[i][1 + n]) * conj(f[j1][1 + p]) * conj(f[k1][p]) * f[i][n] * f[j1][m] * f[k1][1 + p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][p]) * f[i][n] * f[j1][p] * f[k1][1 + p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + n]) * conj(f[j1][1 + p]) * conj(f[k1][p]) * f[i][n] * f[j1][m] * f[k1][1 + p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, j1, k1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][p]) * f[i][n] * f[j1][p] * f[k1][1 + p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, j1, k1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( 1 + -1. * m + p == 0)
+{
+Ej2k2 += conj(f[i][1 + n]) * conj(f[j2][1 + p]) * conj(f[k2][p]) * f[i][n] * f[j2][m] * f[k2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][p]) * f[i][n] * f[j2][p] * f[k2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + n]) * conj(f[j2][1 + p]) * conj(f[k2][p]) * f[i][n] * f[j2][m] * f[k2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, j2, k2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][p]) * f[i][n] * f[j2][p] * f[k2][1 + p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, j2, k2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += conj(f[i][p]) * conj(f[j1][-1 + m]) * conj(f[j2][1 + p]) * f[i][n] * f[j1][m] * f[j2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][1 + p]) * f[i][1 + p] * f[j1][m] * f[j2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][p]) * conj(f[j1][-1 + m]) * conj(f[j2][1 + p]) * f[i][n] * f[j1][m] * f[j2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, j2, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][1 + p]) * f[i][1 + p] * f[j1][m] * f[j2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, j2, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += conj(f[i][p]) * conj(f[j1][1 + p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][1 + p]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j1][p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][p]) * conj(f[j1][1 + p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, j1, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][1 + p]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j1][p] * f[j2][m] * g(n, m) * g(p, 1 + p) * J[i] * J[j1] * eps(dU, j1, i, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( m + -1. * p == 0)
+{
+Ej1k1 += -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][1 + p]) * f[i][n] * f[j1][1 + p] * f[k1][p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][1 + p]) * f[i][n] * f[j1][1 + p] * f[k1][p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, k1, j1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej1k1 += conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[k1][1 + p]) * f[i][n] * f[j1][m] * f[k1][p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[k1][1 + p]) * f[i][n] * f[j1][m] * f[k1][p] * g(n, m) * g(p, 1 + p) * J[j1] * J[k1] * eps(dU, k1, j1, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+if( nmax >= 1 + p)
+{
+if( m + -1. * p == 0)
+{
+Ej2k2 += -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][1 + p]) * f[i][n] * f[j2][1 + p] * f[k2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + -1. * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][1 + p]) * f[i][n] * f[j2][1 + p] * f[k2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, k2, j2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej2k2 += conj(f[i][1 + n]) * conj(f[j2][p]) * conj(f[k2][1 + p]) * f[i][n] * f[j2][m] * f[k2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m) * eps(U0, n, m))) + conj(f[i][1 + n]) * conj(f[j2][p]) * conj(f[k2][1 + p]) * f[i][n] * f[j2][m] * f[k2][p] * g(n, m) * g(p, 1 + p) * J[i] * J[j2] * eps(dU, k2, j2, p, 1 + p) * (1 / (eps(U0, n, m) * eps(U0, n, m)));
+}
+}
+}
+}
+}
+}
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
-CUnknownElement[energyFunction[energy5, CIf[COperator[Less, {n, nmax}], CFor[CDeclare[int, CAssign[m, 1]], COperator[Less, {m, nmax+1}], COperator[Increment, m], CIf[COperator[Unequal, {n, COperator[Plus, {-1, m}]}], CFor[CDeclare[int, CAssign[p, 0]], COperator[Less, {p, nmax}], COperator[Increment, p], CFor[CDeclare[int, CAssign[q, 1]], COperator[Less, {q, nmax+1}], COperator[Increment, q], CIf[COperator[Unequal, {p, COperator[Plus, {-1, q}]}], {CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]]}], CIf[COperator[And, {COperator[LessEqual, {COperator[Plus, {1, p}], nmax}], COperator[GreaterEqual, {q, 1}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[LessEqual, {COperator[Plus, {1, p}], nmax}], COperator[GreaterEqual, {q, 1}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, j1, k1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, j1, k1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, j2, k2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {-1 + q}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, j2, k2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, k1, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej1k1, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, k1, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + p}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, k2, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej2k2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, k2, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]]]}]}]]]]]]]]
+complex<SX> energy5(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+if( n < nmax)
+{
+for( int m = 1; m < nmax+1; m++)
+{
+if( n != -1 + m)
+{
+for( int p = 0; p < nmax; p++)
+{
+for( int q = 1; q < nmax+1; q++)
+{
+if( p != -1 + q)
+{
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0 && n + -1. * q == 0)
+{
+Ej1 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0 && 2 + n + -1. * q == 0)
+{
+Ej1 += 0.5 * conj(f[i][q]) * conj(f[j1][p]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0 && n + -1. * q == 0)
+{
+Ej2 += -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0 && 2 + n + -1. * q == 0)
+{
+Ej2 += 0.5 * conj(f[i][q]) * conj(f[j2][p]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( 1 + p <= nmax && q >= 1)
+{
+if( n + -1. * p == 0 && m + -1. * q == 0)
+{
+Ej1 += 0.5 * conj(f[i][p]) * conj(f[j1][q]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( 1 + p <= nmax && q >= 1)
+{
+if( n + -1. * p == 0 && m + -1. * q == 0)
+{
+Ej2 += 0.5 * conj(f[i][p]) * conj(f[j2][q]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * q == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + n + -1. * q == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][q]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * q == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][-1 + q] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + n + -1. * q == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][q]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][n] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * q == 0)
+{
+Ej1k1 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[k1][p]) * f[i][n] * f[j1][m] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, j1, k1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][p]) * f[i][n] * f[j1][-1 + q] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, j1, k1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * q == 0)
+{
+Ej2k2 += 0.5 * conj(f[i][1 + n]) * conj(f[j2][q]) * conj(f[k2][p]) * f[i][n] * f[j2][m] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, j2, k2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][p]) * f[i][n] * f[j2][-1 + q] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, j2, k2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][p]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][n] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][1 + p] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][p]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0)
+{
+Ej1k1 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][q]) * f[i][n] * f[j1][1 + p] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, k1, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej1k1 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[k1][q]) * f[i][n] * f[j1][m] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, k1, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0)
+{
+Ej2k2 += -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][q]) * f[i][n] * f[j2][1 + p] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, k2, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej2k2 += 0.5 * conj(f[i][1 + n]) * conj(f[j2][p]) * conj(f[k2][q]) * f[i][n] * f[j2][m] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, k2, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, -1 + q, 1 + p)));
+}
+}
+}
+}
+}
+}
+}
+}
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
-CUnknownElement[energyFunction[energy6, CIf[COperator[Less, {n, nmax}], CFor[CDeclare[int, CAssign[m, 1]], COperator[Less, {m, nmax+1}], COperator[Increment, m], CIf[COperator[Unequal, {n, COperator[Plus, {-1, m}]}], CFor[CDeclare[int, CAssign[p, 0]], COperator[Less, {p, nmax}], COperator[Increment, p], CFor[CDeclare[int, CAssign[q, 1]], COperator[Less, {q, nmax+1}], COperator[Increment, q], CIf[COperator[Unequal, {p, COperator[Plus, {-1, q}]}], CIf[COperator[Equal, {COperator[Plus, {COperator[Times, {-1., m}], n}], COperator[Plus, {p, COperator[Times, {-1., q}]}]}], {CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]]}], CIf[COperator[And, {COperator[LessEqual, {COperator[Plus, {1, p}], nmax}], COperator[GreaterEqual, {q, 1}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[And, {COperator[LessEqual, {COperator[Plus, {1, p}], nmax}], COperator[GreaterEqual, {q, 1}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {-1 + q}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej1k1, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + p}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej2k2, COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}]}]]]}]}]]]]]]]]]
+complex<SX> energy6(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+if( n < nmax)
+{
+for( int m = 1; m < nmax+1; m++)
+{
+if( n != -1 + m)
+{
+for( int p = 0; p < nmax; p++)
+{
+for( int q = 1; q < nmax+1; q++)
+{
+if( p != -1 + q)
+{
+if( -1. * m + n == p + -1. * q)
+{
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0 && n + -1. * q == 0)
+{
+Ej1 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * (1 / (eps(U0, n, m)));
+}
+if( 2 + -1. * m + p == 0 && 2 + n + -1. * q == 0)
+{
+Ej1 += -0.5 * conj(f[i][q]) * conj(f[j1][p]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0 && n + -1. * q == 0)
+{
+Ej2 += 0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * (1 / (eps(U0, n, m)));
+}
+if( 2 + -1. * m + p == 0 && 2 + n + -1. * q == 0)
+{
+Ej2 += -0.5 * conj(f[i][q]) * conj(f[j2][p]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * (1 / (eps(U0, n, m)));
+}
+}
+if( 1 + p <= nmax && q >= 1)
+{
+if( n + -1. * p == 0 && m + -1. * q == 0)
+{
+Ej1 += -0.5 * conj(f[i][p]) * conj(f[j1][q]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * (1 / (eps(U0, n, m))) + 0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * (1 / (eps(U0, n, m)));
+}
+}
+if( 1 + p <= nmax && q >= 1)
+{
+if( n + -1. * p == 0 && m + -1. * q == 0)
+{
+Ej2 += -0.5 * conj(f[i][p]) * conj(f[j2][q]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * (1 / (eps(U0, n, m))) + 0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * q == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m)));
+}
+if( 2 + n + -1. * q == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][q]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * q == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][-1 + q] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m)));
+}
+if( 2 + n + -1. * q == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][q]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][n] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * q == 0)
+{
+Ej1k1 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[k1][p]) * f[i][n] * f[j1][m] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * (1 / (eps(U0, n, m))) + 0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][p]) * f[i][n] * f[j1][-1 + q] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * q == 0)
+{
+Ej2k2 += -0.5 * conj(f[i][1 + n]) * conj(f[j2][q]) * conj(f[k2][p]) * f[i][n] * f[j2][m] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * (1 / (eps(U0, n, m))) + 0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][p]) * f[i][n] * f[j2][-1 + q] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][p]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][n] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m))) + 0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][1 + p] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][p]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m))) + 0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0)
+{
+Ej1k1 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][q]) * f[i][n] * f[j1][1 + p] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * (1 / (eps(U0, n, m)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej1k1 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[k1][q]) * f[i][n] * f[j1][m] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * (1 / (eps(U0, n, m)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0)
+{
+Ej2k2 += 0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][q]) * f[i][n] * f[j2][1 + p] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * (1 / (eps(U0, n, m)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej2k2 += -0.5 * conj(f[i][1 + n]) * conj(f[j2][p]) * conj(f[k2][q]) * f[i][n] * f[j2][m] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * (1 / (eps(U0, n, m)));
+}
+}
+}
+}
+}
+}
+}
+}
+}
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
-CUnknownElement[energyFunction[energy7, CIf[COperator[Less, {n, nmax}], CFor[CDeclare[int, CAssign[m, 1]], COperator[Less, {m, nmax+1}], COperator[Increment, m], CIf[COperator[Unequal, {n, COperator[Plus, {-1, m}]}], CFor[CDeclare[int, CAssign[p, 0]], COperator[Less, {p, nmax}], COperator[Increment, p], CFor[CDeclare[int, CAssign[q, 1]], COperator[Less, {q, nmax+1}], COperator[Increment, q], CIf[COperator[Unequal, {p, COperator[Plus, {-1, q}]}], CIf[COperator[Unequal, {COperator[Plus, {COperator[Times, {-1., m}], n}], COperator[Plus, {p, COperator[Times, {-1., q}]}]}], {CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]], CIf[COperator[And, {COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej1, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {j1}], CArray[J, {j1}]}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[And, {COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}]}], CAssign[AddTo, Ej2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Times, {CArray[J, {i}], CArray[J, {i}]}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {-1 + q}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, n, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {q}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, j1, k1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {k1}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, j1, k1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., q}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {-1 + q}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, j2, k2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {p}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {-1 + q}], CArray[CArray[f, {k2}], {1 + p}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, j2, k2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {j2}], {q}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {j2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j2, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {n, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1j2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {p}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {q}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CArray[CArray[f, {i}], {1 + p}], CArray[CArray[f, {j1}], {-1 + q}], CArray[CArray[f, {j2}], {m}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j1}], CCall[eps, {dU, j1, i, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {1 + p}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, k1, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej1k1, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, i, j1, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j1}], {p}]}], CCall[conj, {CArray[CArray[f, {k1}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j1}], {m}], CArray[CArray[f, {k1}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {j1}], CArray[J, {k1}], CCall[eps, {dU, k1, j1, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}], CIf[COperator[And, {COperator[GreaterEqual, {q, 1}], COperator[LessEqual, {COperator[Plus, {1, p}], nmax}]}], {CIf[COperator[Equal, {COperator[Plus, {m, COperator[Times, {-1., p}]}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + p}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {-0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {-1 + m}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {1 + p}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, k2, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]], CIf[COperator[Equal, {COperator[Plus, {2, COperator[Times, {-1., m}], p}], 0}], CAssign[AddTo, Ej2k2, COperator[Plus, {COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, i, j2, n, m}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}], COperator[Times, {0.5, CCall[conj, {CArray[CArray[f, {i}], {1 + n}]}], CCall[conj, {CArray[CArray[f, {j2}], {p}]}], CCall[conj, {CArray[CArray[f, {k2}], {q}]}], CArray[CArray[f, {i}], {n}], CArray[CArray[f, {j2}], {m}], CArray[CArray[f, {k2}], {-1 + q}], CCall[g, {n, m}], CCall[g, {COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], CArray[J, {i}], CArray[J, {j2}], CCall[eps, {dU, k2, j2, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}], COperator[Divide, {1, COperator[Times, {CCall[eps, {U0, n, m}]}]}], COperator[Divide, {1, COperator[Times, {COperator[Plus, {CCall[eps, {U0, n, m}], CCall[eps, {U0, COperator[Plus, {-1, q}], COperator[Plus, {1, p}]}]}]}]}]}]}]]]}]}]]]]]]]]]
+complex<SX> energy7(int i, int n, SX& fin, SX& J, SX& U0, SX& dU, SX& mu)
+{
+vector<vector<complex<SX>>> f(L, vector<complex<SX>>(dim, complex<SX>(0, 0)));
+vector<SX> norm2(L, 0);
+for( int j = 0; j < L; j++)
+{
+for( int k = 0; k < dim; k++)
+{
+int l = 2 * (dim * j + k);
+f[j][k] = complex<SX>(fin[l], fin[l+1]);
+}
+for( int m = 0; m <= nmax; m++)
+{
+norm2[j] += f[j][m].real() * f[j][m].real() + f[j][m].imag() * f[j][m].imag();
+}
+}
+complex<SX> E, Ei, Ej1, Ej2, Ej1j2, Ej1k1, Ej2k2;
+E = complex<SX>(0,0);
+Ei = complex<SX>(0,0);
+Ej1 = complex<SX>(0,0);
+Ej2 = complex<SX>(0,0);
+Ej1j2 = complex<SX>(0,0);
+Ej1k1 = complex<SX>(0,0);
+Ej2k2 = complex<SX>(0,0);
+int k1 = mod(i-2);
+int j1 = mod(i-1);
+int j2 = mod(i+1);
+int k2 = mod(i+2);
+if( n < nmax)
+{
+for( int m = 1; m < nmax+1; m++)
+{
+if( n != -1 + m)
+{
+for( int p = 0; p < nmax; p++)
+{
+for( int q = 1; q < nmax+1; q++)
+{
+if( p != -1 + q)
+{
+if( -1. * m + n != p + -1. * q)
+{
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0 && n + -1. * q == 0)
+{
+Ej1 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0 && 2 + n + -1. * q == 0)
+{
+Ej1 += 0.5 * conj(f[i][q]) * conj(f[j1][p]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][q]) * conj(f[j1][p]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0 && n + -1. * q == 0)
+{
+Ej2 += -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0 && 2 + n + -1. * q == 0)
+{
+Ej2 += 0.5 * conj(f[i][q]) * conj(f[j2][p]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][q]) * conj(f[j2][p]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0 && m + -1. * q == 0)
+{
+Ej1 += 0.5 * conj(f[i][p]) * conj(f[j1][q]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][p]) * conj(f[j1][q]) * f[i][n] * f[j1][m] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[j1] * J[j1]) * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0 && m + -1. * q == 0)
+{
+Ej2 += 0.5 * conj(f[i][p]) * conj(f[j2][q]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][p]) * conj(f[j2][q]) * f[i][n] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * (J[i] * J[i]) * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * q == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][-1 + q] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + n + -1. * q == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][q]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][q]) * conj(f[j1][p]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][1 + p] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * q == 0)
+{
+Ej1j2 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][-1 + q] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][-1 + q] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + n + -1. * q == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][q]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][n] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][q]) * conj(f[j1][-1 + m]) * conj(f[j2][p]) * f[i][n] * f[j1][m] * f[j2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * q == 0)
+{
+Ej1k1 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[k1][p]) * f[i][n] * f[j1][m] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][p]) * f[i][n] * f[j1][-1 + q] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[k1][p]) * f[i][n] * f[j1][m] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, j1, k1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][p]) * f[i][n] * f[j1][-1 + q] * f[k1][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, j1, k1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * q == 0)
+{
+Ej2k2 += 0.5 * conj(f[i][1 + n]) * conj(f[j2][q]) * conj(f[k2][p]) * f[i][n] * f[j2][m] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][p]) * f[i][n] * f[j2][-1 + q] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][1 + n]) * conj(f[j2][q]) * conj(f[k2][p]) * f[i][n] * f[j2][m] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, j2, k2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][p]) * f[i][n] * f[j2][-1 + q] * f[k2][1 + p] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, j2, k2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][p]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][n] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][1 + p] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][p]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][n] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[j2][q]) * f[i][1 + p] * f[j1][m] * f[j2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j2, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( n + -1. * p == 0)
+{
+Ej1j2 += 0.5 * conj(f[i][p]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][p]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][n] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][q]) * conj(f[j2][-1 + m]) * f[i][1 + p] * f[j1][-1 + q] * f[j2][m] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j1] * eps(dU, j1, i, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0)
+{
+Ej1k1 += -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][q]) * f[i][n] * f[j1][1 + p] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j1][-1 + m]) * conj(f[k1][q]) * f[i][n] * f[j1][1 + p] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, k1, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej1k1 += 0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[k1][q]) * f[i][n] * f[j1][m] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, i, j1, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][1 + n]) * conj(f[j1][p]) * conj(f[k1][q]) * f[i][n] * f[j1][m] * f[k1][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[j1] * J[k1] * eps(dU, k1, j1, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+if( q >= 1 && 1 + p <= nmax)
+{
+if( m + -1. * p == 0)
+{
+Ej2k2 += -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][q]) * f[i][n] * f[j2][1 + p] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + -0.5 * conj(f[i][1 + n]) * conj(f[j2][-1 + m]) * conj(f[k2][q]) * f[i][n] * f[j2][1 + p] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, k2, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+if( 2 + -1. * m + p == 0)
+{
+Ej2k2 += 0.5 * conj(f[i][1 + n]) * conj(f[j2][p]) * conj(f[k2][q]) * f[i][n] * f[j2][m] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, i, j2, n, m) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p))) + 0.5 * conj(f[i][1 + n]) * conj(f[j2][p]) * conj(f[k2][q]) * f[i][n] * f[j2][m] * f[k2][-1 + q] * g(n, m) * g(-1 + q, 1 + p) * J[i] * J[j2] * eps(dU, k2, j2, -1 + q, 1 + p) * (1 / (eps(U0, n, m))) * (1 / (eps(U0, n, m) + eps(U0, -1 + q, 1 + p)));
+}
+}
+}
+}
+}
+}
+}
+}
+}
+E += Ei;
+E += Ej1;
+E += Ej2;
+E += Ej1j2;
+E += Ej1k1;
+E += Ej2k2;
+return E;
+}
 
